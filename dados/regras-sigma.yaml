@@ -1,0 +1,123 @@
+# Regras de deteccao em formato Sigma (subconjunto), 7 regras.
+# Formato de lista unica sob a chave 'rules' porque safe_load nao le
+# multi-documento: o Sigma oficial separa com '---', e uma regra por
+# documento faz o parser devolver so a primeira.
+#
+# Campos usados por siemlab.regras:
+#   selection - condicoes que precisam ser verdadeiras
+#   filter    - condicoes que, se verdadeiras, descartam o alerta
+#   condition - 'and' (todas) ou 'or' (alguma)
+#
+# O campo 'tipo' e o identificador do alerta. Antes ele era deduzido do titulo
+# por substring, e isso errou: "Login bem-sucedido apos falhas" casava com
+# "falha" e saia como multiplos_logins_falhados. Inferir tipo de nome de texto
+# e fragil; o campo explicito nao erra.
+
+rules:
+  # 1. Multiplas falhas de login do mesmo IP em 60s
+  - title: Multiplas falhas de login do mesmo IP
+    id: SIEM-0001
+    tipo: multiplos_logins_falhados
+    level: high
+    descricao: Tres ou mais falhas de login do mesmo endereco de origem.
+    tecnica_mitre: T1110
+    severity: alta
+    detection:
+      condition: and
+      selection:
+        tipo_evento: login_falhido
+
+  # 2. Login bem-sucedido logo apos falhas (comprometimento provavel)
+  - title: Login bem-sucedido apos falhas
+    id: SIEM-0002
+    tipo: login_sucesso_apos_falhas
+    level: high
+    descricao: Login bem-sucedido de uma conta que ja falhou no mesmo periodo.
+    tecnica_mitre: T1078
+    severity: alta
+    detection:
+      condition: and
+      selection:
+        tipo_evento: login_sucesso
+        conta_privilegiada: true
+
+  # 3. Acesso fora do horario habitual
+  - title: Acesso fora do horario habitual
+    id: SIEM-0003
+    tipo: acesso_fora_horario
+    level: medium
+    descricao: Login entre 00h e 05h, faixa sem atividade da empresa.
+    tecnica_mitre: T1078
+    severity: media
+    detection:
+      condition: and
+      selection:
+        tipo_evento: login_sucesso
+        fora_horario: true
+
+  # 4. Uso de conta de privilegio por usuario comum
+  - title: Conta de privilegio em uso por usuario comum
+    id: SIEM-0004
+    tipo: conta_privilegio_usuario_comum
+    level: high
+    descricao: Conta de administrador acessada por quem nao e administrador.
+    tecnica_mitre: T1078
+    severity: alta
+    detection:
+      condition: and
+      selection:
+        conta_privilegiada: true
+
+  # 5. Download de volume anormal de dados
+  - title: Download de volume anormal
+    id: SIEM-0005
+    tipo: download_volume_anormal
+    level: high
+    descricao: Transferencia muito acima do perfil normal da conta.
+    tecnica_mitre: T1005
+    severity: alta
+    detection:
+      condition: and
+      selection:
+        tipo_evento: download
+        bytes: {gt: 100000000}
+
+  # 6. Conexao de saida para destino em lista de bloqueio
+  - title: Conexao para destino bloqueado
+    id: SIEM-0006
+    tipo: conexao_saida_bloqueio
+    level: critical
+    descricao: Conexao de saida para destino presente na lista de bloqueio.
+    tecnica_mitre: T1071
+    severity: alta
+    detection:
+      condition: and
+      selection:
+        destino_bloqueado: true
+
+  # 7. Enumeracao de recursos em curto intervalo
+  #
+  # Esta e PADRAO, nao propriedade de evento: nenhum evento isolado prova
+  # enumeracao. Aplicar por evento casava TODO acesso a recurso e produzia
+  # 562 alertas em trafego normal - 100% falso positivo. Ela fica marcada
+  # `correlacao: true` e e tratada por correlacao_enumeracao_recursos, que
+  # conta recursos DISTINTOS por IP antes de alertar.
+  - title: Enumeracao de recursos
+    id: SIEM-0007
+    tipo: enumeracao_recursos
+    correlacao: true
+    level: medium
+    descricao: Many distinct endpoints accessed from one source in short time.
+    tecnica_mitre: T1087
+    severity: media
+    detection:
+      condition: and
+      selection:
+        tipo_evento: enum_recurso
+
+# Filtro aplicado a regra 1: nao alertar quando o login foi bem-sucedido,
+# porque ai nao e forca bruta e sim um erro de digitacao.
+filter_auth_success:
+  rule_id: SIEM-0001
+  filter:
+    tipo_evento: login_sucesso

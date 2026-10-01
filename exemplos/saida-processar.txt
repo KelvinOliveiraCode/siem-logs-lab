@@ -1,0 +1,11 @@
+Eventos processados: 2378
+Alertas gerados: 26
+
+Alertas por tecnica MITRE:
+  T1005: 3
+  T1071: 2
+  T1078: 17
+  T1087: 1
+  T1110: 3
+
+Relatorio gravado em: exemplos/alertas.json

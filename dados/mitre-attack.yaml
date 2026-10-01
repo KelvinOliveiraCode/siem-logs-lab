@@ -1,0 +1,57 @@
+attck:
+- description: Threat actors may use valid accounts to bypass access controls and
+    conduct other malicious activity.
+  mitre_url: https://attack.mitre.org/techniques/T1078
+  name: Valid Accounts
+  tactics:
+  - credential_access
+  - defense_evasion
+  technique_id: T1078
+- description: Threshold techniques used to guess credentials or encryption keys.
+  mitre_url: https://attack.mitre.org/techniques/T1110
+  name: Brute Force
+  tactics:
+  - credential_access
+  - defense_evasion
+  technique_id: T1110
+- description: Staging is the process of collecting and placing exfiltrated data for
+    exfiltration.
+  mitre_url: https://attack.mitre.org/techniques/T1005
+  name: Data Staging
+  tactics:
+  - exfiltration
+  technique_id: T1005
+- description: Threat actors are likely to abuse application layer protocols to blend
+    in with normal traffic.
+  mitre_url: https://attack.mitre.org/techniques/T1071
+  name: Application Layer Protocol
+  tactics:
+  - command_and_control
+  technique_id: T1071
+- description: ' threat actors may attempt to enumerate accounts, groups, and their
+    memberships.'
+  mitre_url: https://attack.mitre.org/techniques/T1087
+  name: Account Discovery
+  tactics:
+  - discovery
+  technique_id: T1087
+- description: Threat actors may use proxy servers, proxy networks, or other intermediate
+    layers to hide the existence or origin of traffic.
+  mitre_url: https://attack.mitre.org/techniques/T1090
+  name: Proxy
+  tactics:
+  - defense_evasion
+  - command_and_control
+  technique_id: T1090
+- description: Credentials that are transmitted or stored in an unsecured manner.
+  mitre_url: https://attack.mitre.org/techniques/T1025
+  name: Unsecured Credentials
+  tactics:
+  - credential_access
+  technique_id: T1025
+- description: Scanning of network services, ports, or hosts.
+  mitre_url: https://attack.mitre.org/techniques/T1046
+  name: Network Service Discovery
+  tactics:
+  - discovery
+  technique_id: T1046

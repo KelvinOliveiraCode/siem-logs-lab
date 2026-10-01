@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "siemlab"
+version = "1.0.0"
+description = "Pipeline local de SIEM com regras Sigma, correlacao temporal e alertas MITRE ATT&CK"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = ["PyYAML>=6.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "pytest-cov>=4.1"]
+
+[project.scripts]
+siemlab = "siemlab.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
