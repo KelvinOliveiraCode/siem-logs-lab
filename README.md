@@ -32,7 +32,7 @@ triagem - o analista precisa da tecnica, das entidades envolvidas, da linha do
 tempo e de uma sugestao de resposta.
 
 E a parte que quase ninguem demonstra: a regra que **nao** dispara. Um detector
-que alerta em trafego normal e ruido com formatacao boa. Aqui a base tem 2.305
+que alerta em trafego normal e ruido com formatacao boa. Aqui a base tem 2.300
 eventos de trafego benigno e as 7 regras produzem **zero** alerta neles - isso
 esta em teste, nao em promessa.
 
@@ -64,8 +64,6 @@ Alertas por tecnica MITRE:
   T1078: 17
   T1087: 1
   T1110: 3
-
-Relatorio gravado em: exemplos/alertas.json
 ```
 
 Estrutura de um alerta:
@@ -169,7 +167,7 @@ and a suggested response.
 
 And there is the part almost nobody demonstrates: the rule that **does not**
 fire. A detector that alerts on normal traffic is noise with good formatting.
-Here the base has 2,305 benign events and the 7 rules produce **zero** alerts on
+Here the base has 2,300 benign events and the 7 rules produce **zero** alerts on
 them - and that is in a test, not in a promise.
 
 ### How to run
@@ -200,8 +198,6 @@ Alertas por tecnica MITRE:
   T1078: 17
   T1087: 1
   T1110: 3
-
-Relatorio gravado em: exemplos/alertas.json
 ```
 
 Alert structure:
