@@ -16,5 +16,7 @@ jobs:
           python-version: '3.11'
       - name: Instalar dependencias
         run: pip install -r requirements.txt
+      - name: Conferir encoding dos arquivos de texto
+        run: python tools/verificar_encoding.py
       - name: Rodar testes com cobertura
         run: python -m pytest tests/ -v --cov=siemlab --cov-report=term --cov-fail-under=70
