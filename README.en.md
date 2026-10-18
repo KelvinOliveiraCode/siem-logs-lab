@@ -1,83 +1,91 @@
+
 # siem-logs-lab
 
-<img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white" alt="Python">
-<img src="https://img.shields.io/badge/license-MIT-yellow?style=flat-square" alt="License">
+![language: Python](https://img.shields.io/badge/language-Python-blue?logo=python)   ![status: done](https://img.shields.io/badge/status-done-green)   ![license: MIT](https://img.shields.io/badge/license-MIT-blue)
 
-Local detection pipeline with seven rules, temporal correlation across events, and alerts mapped to MITRE ATT&CK.
+## Summary
 
-## Problem / Why it exists
+Python project developed as a software engineering study. Pipeline local de deteccao: 7 regras, correlacao temporal e alertas MITRE ATT&CK
 
-Security detection is not a search engine over logs. It is correlation of events that only make sense together, with time as the common axis. A single failed login is noise; the same login followed by a successful one from another country five minutes later is an incident. This project demonstrates that correlation with rules and time windows, on synthetic data, without SIEM, agent, or cloud.
+## Problem / why it exists
+
+The project addresses a practical scope and automates a task that, done manually, is repetitive and error-prone. The focus is on turning data or processes into reliable output, with readable and testable code.
+
+## Architecture
+
+The code is organized by responsibility:
+
+- Input: reading a file, API, user input or data capture (depending on the module).
+- Processing: pure functions or classes that apply business rules, transformation or analysis over the input data.
+- Output: writing a file, printing to terminal, HTTP response or report generation.
+
+When applicable, the application separates the data access layer from the business logic layer, so changing the data source does not require rewriting the rules.
+
+## Technologies
+
+- Python 3.x
+- pytest
+- PyYAML
+- pytest-cov
+
+- GitHub Actions (CI): workflow(s) in `.github/workflows/`
+
+The repository contains automated tests.
 
 ## What it does
 
-- Loads 2,378 synthetic log events from `dados/logs-sinteticos.jsonl`.
-- Applies seven detection rules (failed login, success after failure, privilege escalation, lateral movement, data exfiltration, port scan, brute force).
-- Correlates events by time window per user, IP, and host.
-- Maps each alert to a MITRE ATT&CK technique (T1110, T1078, T1068, T1021, T1041, T1046).
-- Emits a report with the alert list, involved events, and severity.
-- Runs from the CLI with `resumir` and `--saida` to save the report.
-
-## Stack
-
-- Python 3.10+
-- PyYAML >= 6.0 (only runtime dependency)
-- pytest and pytest-cov (development)
-- Standard library only beyond PyYAML
-
-## How it works
-
-1. Normalizer reads the JSONL and validates the schema, rejecting malformed lines.
-2. Rules evaluate each event against its conditions and produce candidate alerts.
-3. Correlation groups candidate alerts by time window per user, IP, and host.
-4. MITRE mapping assigns a technique to each correlated alert.
-5. Report formats the alert list with involved events and severity.
+Pipeline local de deteccao: 7 regras, correlacao temporal e alertas MITRE ATT&CK
 
 ## How to run
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+Requirements: Python 3.x installed.
+
+```
+# install dependencies (if requirements.txt exists)
 pip install -r requirements.txt
-pip install -e .
-python -m siem_logs_lab resumir
-python -m siem_logs_lab resumir --saida exemplos/relatorio-siem.md
-python -m pytest tests/ -q
+
+# run
+python main.py
+
+# run tests
+pytest
 ```
 
 ## Project structure
 
-```
-siem-logs-lab/
-├── src/siemlab/           # package: cli, regras, correlacao, normalizador, alertas, relatorio
-├── dados/                 # logs-sinteticos.jsonl (2,378 events), regras-sigma.yaml
-├── docs/                  # como-funciona-deteccao.md, mitre-attack-mapeamento.md
-├── exemplos/              # relatorio-siem.md (real output)
-├── tests/                 # 26 tests
-├── tools/                 # gerar_logs.py, verificar_aceite.py, verificar_encoding.py
-├── pyproject.toml
-├── requirements.txt
-└── LICENSE                # MIT
-```
+- src/ (8 arquivo(s))
+- tests/ (6 arquivo(s))
+- dados/ (3 arquivo(s))
+- exemplos/ (3 arquivo(s))
+- docs/ (2 arquivo(s))
+- .github/ (1 arquivo(s))
+- tools/ (1 arquivo(s))
+- .gitattributes, .gitignore, gerar_logs.py, LICENSE, pyproject.toml, README.en.md, README.md, requirements.txt
+
 
 ## Trade-offs and decisions
 
-- Rules in YAML, not in code: changing a threshold is a data edit, not a deploy.
-- Temporal correlation by window, not by exact match: real attacks have jitter.
-- MITRE mapping is manual, not automatic: the mapping is a judgment, not a computation.
-- Synthetic data: no real logs, no privacy concern, reproducible.
+- Standard library whenever possible; external dependencies only when the benefit justifies maintenance.
+- Executable scripts straight away, no complex build step, to ease reproduction.
+- Logic separated from input/output to keep processing functions testable.
 
 ## Known limitations
 
-- Seven rules only: no machine learning, no anomaly detection beyond thresholds.
-- Synthetic data: does not reflect real log volume or noise.
-- No real-time: batch processing only.
-- No alert deduplication: the same incident can fire multiple rules.
+- Limited scope to the described slice; it is not a complete platform.
+- Depends on Python 3.x at runtime.
+
+
+## Tests
+
+```
+pytest
+```
 
 ## License
 
-MIT.
+Distributed under the MIT License. See the `LICENSE` file in this repository.
 
 ## Author
 
-Kelvin Oliveira
+Kelvin Oliveira, https://github.com/KelvinOliveiraCode
+Portfolio: https://kelvinoliveiracode.github.io/portfolio/
