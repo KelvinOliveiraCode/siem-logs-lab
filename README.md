@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**English** · [Português (Brasil)](README.md)
+[English](README.en.md) · **Português (Brasil)**
 
 </div>
 
@@ -18,30 +18,30 @@ Pipeline local de deteccao: 7 regras, correlacao temporal e alertas MITRE ATT&CK
 
 ---
 
-## Quick Start
+## Início Rápido
 
 ```bash
-# Clone and enter
+# Clone e entre
 git clone https://github.com/KelvinOliveiraCode/<repo>.git
 cd <repo>
 
-# Install dependencies
-# No requirements.txt detected
+# Instale dependências
+# Nenhum requirements.txt detectado
 
-# Run the project
+# Execute o projeto
 python main.py
 
-# Run tests
+# Execute os testes
 pytest
 ```
 
 ## Como funciona
 
-The project is organized as a **modular pipeline** with independent stages:
+O projeto é organizado como um **pipeline modular** com etapas independentes:
 
 - `gerar_logs`
 
-Each module has a single responsibility and can be tested or replaced independently.
+Cada módulo tem responsabilidade única e pode ser testado ou substituído independentemente.
 
 ---
 

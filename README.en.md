@@ -37,11 +37,11 @@ pytest
 
 ## How it works
 
-The project is organized as a **modular pipeline** with independent stages:
+O projeto é organizado como um **pipeline modular** com etapas independentes:
 
 - `gerar_logs`
 
-Each module has a single responsibility and can be tested or replaced independently.
+Cada módulo tem responsabilidade única e pode ser testado ou substituído independentemente.
 
 ---
 
