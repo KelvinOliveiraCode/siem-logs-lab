@@ -1,122 +1,128 @@
 # siem-logs-lab
 
-<div align="center">
-
 **English** · [Português (Brasil)](README.md)
 
-</div>
-
-[![Python 3](https://img.shields.io/badge/Python-3.x-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/) [![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikit-learn)](https://scikit-learn.org/) [![pandas](https://img.shields.io/badge/pandas-150458?style=flat-square&logo=pandas)](https://pandas.pydata.org/) [![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=flat-square&logo=pytest)](https://docs.pytest.org/) [![MIT License](https://img.shields.io/badge/License-MIT-f4c430?style=flat-square)](LICENSE)
-
-### Pipeline local de deteccao: 7 regras, correlacao temporal e alertas MITRE ATT&CK
-
----
+[![Python 3](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)](#) [![PyYAML](https://img.shields.io/badge/PyYAML-only%20runtime%20dep-3776AB?style=flat-square)](#) [![pytest](https://img.shields.io/badge/pytest-115%20tests-0A9EDC?style=flat-square&logo=pytest)](#) [![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions)](#.github/workflows/ci.yml) [![MIT License](https://img.shields.io/badge/License-MIT-f4c430?style=flat-square)](LICENSE)
 
 ## What it is
 
-Pipeline local de deteccao: 7 regras, correlacao temporal e alertas MITRE ATT&CK
+A local **log-event detection lab** in the spirit of a SIEM: an engine that applies **Sigma-style rules** to a set of synthetic logs, does **temporal correlation** (a sliding window) and produces **alerts mapped to MITRE ATT&CK**. It ships with 7 configured detection rules.
 
----
+## Status
 
-## Quick Start
+An educational security lab, working and tested.
 
-```bash
-# Clone and enter
-git clone https://github.com/KelvinOliveiraCode/<repo>.git
-cd <repo>
+## Features
 
-# Install dependencies
-# No requirements.txt detected
+- **Sigma-style rule engine** (`regras.py`): parses conditions (selection, filter, condition) and evaluates events.
+- **7 detection rules** in `dados/regras-sigma.yaml`:
+  1. Multiple login failures from the same IP
+  2. Successful login after failures
+  3. Access outside the usual hours
+  4. Privileged account used by a common user
+  5. Abnormal download volume
+  6. Connection to a blocked destination
+  7. Resource enumeration
+- **Temporal correlation** (`correlacao.py`): a sliding window anchored on the **most recently seen event** (not on the system clock), because a SIEM processes historical logs.
+- **Event normalization** and **alert generation** (JSON), with a report.
+- **CLI**: `processar` (logs → alert JSON) and `resumir` (alerts grouped by type).
+- **MITRE ATT&CK**: a technique reference map in `dados/mitre-attack.yaml`.
+- **Data simulation**: `gerar_logs.py` produces the synthetic dataset.
 
-# Run the project
-python main.py
+## Architecture
 
-# Run tests
-pytest
+A `siemlab` package with separated modules: `normalizador` (standardizes events), `regras` (Sigma engine), `correlacao` (temporal window), `alertas` (generates/serializes), `relatorio` and `cli`. Declarative YAML config (rules and MITRE map); synthetic data in JSONL.
+
+```mermaid
+flowchart LR
+    L[logs-sinteticos.jsonl] --> N[normalizer]
+    N --> R[rules - Sigma engine]
+    N --> C[correlation - temporal window]
+    R --> A[alerts]
+    C --> A
+    A --> REP[report]
+    A --> CLI[cli processar/resumir]
 ```
 
-## How it works
+## Stack
 
-O projeto é organizado como um **pipeline modular** com etapas independentes:
+- Python ≥ 3.10
+- PyYAML ≥ 6.0 (the only runtime dependency)
+- pytest + pytest-cov (dev)
+- CI: GitHub Actions (windows-latest, Python 3.11)
 
-- `gerar_logs`
+## Repository layout
 
-Cada módulo tem responsabilidade única e pode ser testado ou substituído independentemente.
+```
+siem-logs-lab/
+├── src/siemlab/
+│   ├── normalizador.py    # standardizes events
+│   ├── regras.py          # Sigma rule engine
+│   ├── correlacao.py      # sliding temporal window
+│   ├── alertas.py · relatorio.py
+│   └── cli.py
+├── dados/
+│   ├── logs-sinteticos.jsonl   # 2,378 log events
+│   ├── regras-sigma.yaml       # 7 rules
+│   └── mitre-attack.yaml       # technique reference
+├── docs/                    # how to write a Sigma rule, detection rules
+├── exemplos/                # alertas.json, real output (pytest: 115 passed)
+├── gerar_logs.py            # generates the synthetic data
+├── .github/workflows/ci.yml
+└── LICENSE                  # MIT
+```
 
----
+## Prerequisites and installation
 
-## Capabilities
+Python ≥ 3.10.
 
-| Capacidade | Descrição |
-|------------|-------------|
-| Carregamento de Dados | Auto-download do TensorFlow creditcard.csv (284k transações) com cache local |
-| EDA e Visualização | Distribuição de classes, histogramas de Amount, heatmaps de correlação (matplotlib/seaborn) |
-| Pré-processamento | RobustScaler em Amount/Time, split estratificado, remoção de duplicatas |
-| Balanceamento | SMOTE oversampling (fallback: class_weight="balanced") |
-| Modelagem | LogisticRegression, RandomForest, ExtraTrees com RandomizedSearchCV (StratifiedKFold) |
-| Métricas | Accuracy, Precision, Recall, F1, ROC AUC, Specificity, Confusion Matrix |
-| Seleção | Score ponderado: Recall 40% + F1 30% + Precision 20% + Accuracy 10% |
-| Persistência | Serialização joblib para modelo, scaler e resultados completos |
+```bash
+python -m pip install -r requirements.txt
+# for tests:
+python -m pip install -e ".[dev]"
+```
 
+## How to run
 
----
+```bash
+# process logs and write alerts
+python -m siemlab processar dados/logs-sinteticos.jsonl --regras dados/regras-sigma.yaml --saida alertas.json
 
+# summarize alerts by type
+python -m siemlab resumir dados/logs-sinteticos.jsonl --regras dados/regras-sigma.yaml
 
+# (optional) regenerate the synthetic logs
+python gerar_logs.py
+```
 
----
+## Tests and quality
 
-## FAQ
+Real command, verified by the agent:
 
-<details>
-<summary><strong>What is this project?</strong></summary>
+```bash
+python -m pytest tests/
+```
 
-A Python study/project demonstrating core concepts.
+Result: **115 tests passing** (6 test files). CI runs `pytest --cov=siemlab --cov-fail-under=70` on windows-latest (Python 3.11), plus `verificar_encoding.py`.
 
-</details>
+## Technical decisions and trade-offs
 
-<details>
-<summary><strong>How do I run it?</strong></summary>
+- **YAML Sigma-style rules instead of hardcoded code**: adding a rule does not require touching the engine.
+- **Window anchored on the latest event, not on `now()`**: reprocessing historical logs needs context relative to the data, not to the system clock.
+- **A single dependency (PyYAML)**: keeps the lab light and reproducible.
 
-See [Quick Start](#quick-start) for copy-paste commands.
+## Known limitations and roadmap
 
-</details>
+- 7 rules cover common detection cases, not a full SIEM.
+- The data is synthetic (generated by `gerar_logs.py`).
+- Correlation implements a simple temporal window; no advanced grouping heuristics.
 
-<details>
-<summary><strong>Are there tests?</strong></summary>
+## Development process
 
-No automated tests in this repository.
+An individual project by Kelvin Oliveira, built with orchestrated AI agents and reviewed by the author. The rule engine, the correlation and the MITRE mapping are the author's.
 
-</details>
+## License and author
 
-<details>
-<summary><strong>Can I use this in production?</strong></summary>
+MIT — Copyright (c) 2026 Kelvin Rebelo de Oliveira.
 
-This is a **study/portfolio project**. Review and harden (auth, persistence, monitoring, etc.) before production use.
-
-</details>
-
-
-
----
-
-## Documentation
-
-- **Source Code** ,  Browse the `src/` directory for implementation details
-- **API Reference** ,  Inline docstrings + type hints
-- **Architecture Diagram** ,  See [architecture.mermaid](docs/architecture.mermaid) (if present)
-- **Changelog** ,  [CHANGELOG.md](CHANGELOG.md) (if present)
-- **Contributing** ,  [CONTRIBUTING.md](CONTRIBUTING.md) (if present)
-
-## License
-
-[MIT](LICENSE) ,  Kelvin Oliveira
-
----
-
-<div align="center">
-
-**Built with** · Python 3 + scikit-learn + pandas
-
-**Author** · [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfolio](https://kelvinoliveiracode.github.io/portfolio/)
-
-</div>
+**Author**: [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfolio](https://kelvinoliveiracode.github.io/portfolio/)
