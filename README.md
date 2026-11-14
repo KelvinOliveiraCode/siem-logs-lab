@@ -25,9 +25,9 @@ Laboratório educacional de segurança, funcional e testado.
   7. Enumeração de recursos
 - **Correlação temporal** (`correlacao.py`): janela deslizante ancorada no **evento mais recente visto** (não no relógio do sistema), porque o SIEM processa log histórico.
 - **Normalização** de eventos e **geração de alertas** (JSON), com relatório.
-- **CLI**: `processar` (logs → alertas JSON) e `resumir` (alerta agrupado por tipo).
-- **MITRE ATT&CK**: mapa de técnicas de referência em `dados/mitre-attack.yaml`.
-- **Simulação de dados**: `gerar_logs.py` produz o dataset sintético.
+- CLI: `processar` (logs → alertas JSON) e `resumir` (alerta agrupado por tipo).
+- MITRE ATT&CK: mapa de técnicas de referência em `dados/mitre-attack.yaml`.
+- Simulação de dados: `gerar_logs.py` produz o dataset sintético.
 
 ## Arquitetura
 
@@ -53,7 +53,7 @@ flowchart LR
 
 ## Estrutura do repositório
 
-```
+```text
 siem-logs-lab/
 ├── src/siemlab/
 │   ├── normalizador.py    # padroniza eventos
@@ -107,9 +107,9 @@ Resultado: **115 testes passando** (6 arquivos de teste). CI roda `pytest --cov=
 
 ## Decisões técnicas e trade-offs
 
-- **Regras em YAML estilo Sigma em vez de código hardcoded**: adicionar uma regra não exige tocar no motor.
-- **Janela ancorada no último evento, não em `now()`**: reprocessar um log histórico precisa de contexto relativo ao dado, não ao relógio do sistema.
-- **Única dependência (PyYAML)**: mantém o laboratório leve e reproduzível.
+- Regras em YAML estilo Sigma em vez de código hardcoded: adicionar uma regra não exige tocar no motor.
+- Janela ancorada no último evento, não em `now()`: reprocessar um log histórico precisa de contexto relativo ao dado, não ao relógio do sistema.
+- Única dependência (PyYAML): mantém o laboratório leve e reproduzível.
 
 ## Limitações conhecidas e roadmap
 
@@ -123,6 +123,6 @@ Projeto individual de Kelvin Oliveira, construído com agentes de IA orquestrado
 
 ## Licença e autor
 
-MIT — Copyright (c) 2026 Kelvin Rebelo de Oliveira.
+MIT. Copyright (c) 2026 Kelvin Rebelo de Oliveira.
 
 **Autor**: [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfólio](https://kelvinoliveiracode.github.io/portfolio/)

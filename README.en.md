@@ -25,9 +25,9 @@ An educational security lab, working and tested.
   7. Resource enumeration
 - **Temporal correlation** (`correlacao.py`): a sliding window anchored on the **most recently seen event** (not on the system clock), because a SIEM processes historical logs.
 - **Event normalization** and **alert generation** (JSON), with a report.
-- **CLI**: `processar` (logs → alert JSON) and `resumir` (alerts grouped by type).
-- **MITRE ATT&CK**: a technique reference map in `dados/mitre-attack.yaml`.
-- **Data simulation**: `gerar_logs.py` produces the synthetic dataset.
+- CLI: `processar` (logs → alert JSON) and `resumir` (alerts grouped by type).
+- MITRE ATT&CK: a technique reference map in `dados/mitre-attack.yaml`.
+- Data simulation: `gerar_logs.py` produces the synthetic dataset.
 
 ## Architecture
 
@@ -53,7 +53,7 @@ flowchart LR
 
 ## Repository layout
 
-```
+```text
 siem-logs-lab/
 ├── src/siemlab/
 │   ├── normalizador.py    # standardizes events
@@ -107,9 +107,9 @@ Result: **115 tests passing** (6 test files). CI runs `pytest --cov=siemlab --co
 
 ## Technical decisions and trade-offs
 
-- **YAML Sigma-style rules instead of hardcoded code**: adding a rule does not require touching the engine.
-- **Window anchored on the latest event, not on `now()`**: reprocessing historical logs needs context relative to the data, not to the system clock.
-- **A single dependency (PyYAML)**: keeps the lab light and reproducible.
+- YAML Sigma-style rules instead of hardcoded code: adding a rule does not require touching the engine.
+- Window anchored on the latest event, not on `now()`: reprocessing historical logs needs context relative to the data, not to the system clock.
+- A single dependency (PyYAML): keeps the lab light and reproducible.
 
 ## Known limitations and roadmap
 
@@ -123,6 +123,6 @@ An individual project by Kelvin Oliveira, built with orchestrated AI agents and 
 
 ## License and author
 
-MIT — Copyright (c) 2026 Kelvin Rebelo de Oliveira.
+MIT. Copyright (c) 2026 Kelvin Rebelo de Oliveira.
 
 **Author**: [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfolio](https://kelvinoliveiracode.github.io/portfolio/)
